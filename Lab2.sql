@@ -20,6 +20,7 @@ CREATE TABLE NHANVIEN
 	SODT varchar(20),
 	NGVL smalldatetime
 )
+
 CREATE TABLE SANPHAM
 (
 	MASP char(4) PRIMARY KEY,
@@ -138,7 +139,7 @@ ALTER TABLE CTHD ADD FOREIGN KEY (MASP) REFERENCES SANPHAM (MASP)
 ALTER TABLE KHACHHANG DROP CHK_NGDK_NGSINH
 
 INSERT INTO KHACHHANG (MAKH, HOTEN, DCHI, SODT, NGSINH, DOANHSO, NGDK) VALUES
-('KH01', 'Nguyen Van A', '731 Tran Hung Dao, Q5, TpHCM', '08823451', 22/10/1960, 13060000, 22/07/2006)
+('KH11', 'Nguyen Van B', '731 Tran Hung Dao, Q5, TpHCM', '08823451',  '1960-10-22', 13060000, '2006/22/07')
 
 INSERT INTO KHACHHANG (MAKH, HOTEN, DCHI, SODT, NGSINH, DOANHSO, NGDK) VALUES
 ('KH02', 'Tran Ngoc Han', '23/5 Nguyen Trai, Q5, TpHCM', '0908256478', 3/4/1974, 280000, 30/07/2006)
@@ -311,12 +312,17 @@ insert into CTHD (SOHD,MASP,SL) values
 ('1023' ,'ST04', 6)
 
 insert into NHANVIEN (MANV, HOTEN, SODT, NGVL) VALUES
-('NV01', 'Nguyen Nhu Nhut', '0927345678', 13/4/2006),
+('NV01', 'Nguyen Nhu Nhut', '0927345678', '2006-01-01'),
 ('NV02', 'Le Thi Phi Yen', '0987567390', 21/4/2006),
 ('NV03', 'Nguyen Van B', '0997047382', 27/4/2006),
 ('NV04', 'Ngo Thanh Tuan', '0913758498', 24/6/2006),
 ('NV05', 'Nguyen Thi Truc Thanh', '0918590387', 20/7/2006)
 
+
+UPDATE NHANVIEN SET NGVL = '2006-01-01'
+WHERE MANV = 'NV01'
+select * from NHANVIEN
+DELETE  FROM NHANVIEN
 
 
 SELECT * FROM SANPHAM
@@ -329,7 +335,7 @@ SELECT * FROM KHACHHANG
 --c2. Tạo quan hệ SANPHAM1 chứa toàn bộ dữ liệu của quan hệ SANPHAM.
 SELECT * INTO SANPHAM1 FROM SANPHAM
 --c3. Tạo quan hệ KHACHHANG1 chứa toàn bộ dữ liệu của quan hệ KHACHHANG
-SELECT * INTO KHACHHANG1 FROM SANPHAM
+SELECT * INTO KHACHHANG1 FROM KHACHHANG
 
 --Sửa dữ liệu:
 --c4. Cập nhật giá (GIA) tăng 5% đối với những sản phẩm do “Thai Lan” sản xuất (NUOCSX) cho quan hệ SANPHAM1.
@@ -340,35 +346,118 @@ SELECT * FROM SANPHAM1
 --c5. Cập nhật giá (GIA) giảm 5% đối với những sản phẩm do “Trung Quoc” sản xuất (NUOCSX) có giá (GIA) từ 10000 trở xuống cho quan hệ SANPHAM1
 UPDATE SANPHAM1 
 SET GIA = GIA*0.95
-
 WHERE NUOCSX = 'Trung Quoc' and GIA <= 10000
 
-ALTER TABLE KHACHHANG Add LOAIKH VARCHAR(20)
 
-UPDATE KHACHHANG
-SET LOAIKH = 'VIP'
-WHERE (NGDK < 1/1/2007 AND DOANHSO >= 10000000) OR (NGDK >= 1/1/2007 AND DOANHSO >=2000000)
+-- Xóa dữ liệu:
+--c6. Xóa những sản phẩm do Trung Quốc sản xuất (NUOCSX) có giá (GIA) thấp hơn 10000 trong bảng SANPHAM1.
+DELETE FROM SANPHAM1 WHERE GIA <10000 AND NUOCSX  ='Trung Quoc'
 
-USE QuanLyGiaoVu
-USE QuanLyBanHang
+SELECT MASP, TENSP,GIA,NUOCSX FROM SANPHAM1
+WHERE NUOCSX = 'Trung Quoc' AND GIA < 10000;
 
-SELECT MASP, TENSP FROM SANPHAM
-WHERE NUOCSX = 'Trung Quoc'
+--c7. Xóa những khách hàng có doanh số (DOANHSO) thấp hơn 1000000 trong bảng KHACHHANG1.
+DELETE FROM KHACHHANG1 WHERE DOANHSO <1000000
+SELECT * FROM KHACHHANG1 WHERE DOANHSO <1000000
 
+--c8. Xóa toàn bộ dữ liệu trong bảng KHACHHANG1.
+DELETE FROM KHACHHANG1
+SELECT * FROM KHACHHANG1 
+ -- c9. Xóa bảng KHACHHANG1 và bảng SANPHAM1
+ DROP TABLE KHACHHANG1
+ DROP TABLE SANPHAM1
+
+
+--d. Nhóm lệnh truy vấn dữ liệu:
+--d1. In ra danh sách khách hàng (MAKH, HOTEN, DCHI, SODT, NGSINH, NGDK).
+SELECT MAKH, HOTEN, DCHI, SODT, NGSINH, NGDK FROM KHACHHANG
+
+--d2. In ra danh sách các sản phẩm (MASP, TENSP) do “Trung Quoc” sản xuất (NUOCSX).
+SELECT MASP,TENSP FROM SANPHAM WHERE NUOCSX = 'Trung Quoc'
+
+--d3. In ra danh sách các sản phẩm (MASP, TENSP) có đơn vị tính (DVT) là “cay” hoặc “quyen”.
+SELECT MASP,TENSP ,DVT FROM SANPHAM WHERE DVT = 'cay' or DVT = 'quyen'
+-- OR
 SELECT MASP, TENSP FROM SANPHAM
 WHERE DVT IN ('cay', 'quyen')
+--d4. In ra danh sách các sản phẩm (MASP, TENSP) do “Trung Quoc” sản xuất (NUOCSX) có giá (GIA) từ 30000 đến 40000.
+SELECT	MASP,TENSP ,GIA FROM SANPHAM WHERE NUOCSX = 'Trung Quoc' AND (GIA >= 30000 AND GIA <= 40000)
 
-SELECT MASP, TENSP FROM SANPHAM
-WHERE MASP LIKE 'B%01'
+--d5. In ra danh sách các sản phẩm (MASP, TENSP) do “Trung Quoc” hoặc “Thai Lan” sản xuất (NUOCSX) có giá (GIA) từ 30000 đến 40000.
+SELECT	MASP,TENSP ,GIA ,NUOCSX FROM SANPHAM WHERE (NUOCSX = 'Trung Quoc' or NUOCSX ='Thai Lan') AND (GIA >= 30000 AND GIA <= 40000)
 
-SELECT MASP, TENSP FROM SANPHAM
-WHERE NUOCSX = 'Trung Quoc' AND (GIA >=30000 AND GIA <=40000)
+--d6. Tìm các số hóa đơn (SOHD) đã mua sản phẩm có mã số “BB01” hoặc “BB02” (MASP).
+SELECT * FROM CTHD  WHERE MASP ='BB01' OR MASP ='BB02'
+
+--d7. In ra các số hóa đơn (SOHD), trị giá hóa đơn (TRIGIA) bán ra trong ngày 01/01/2007 hoặc 02/01/2007 (NGHD).
 
 SELECT SOHD, TRIGIA FROM HOADON
 WHERE NGHD = 1/1/2007 OR NGHD = 2/1/2007
 
+--d8. In ra danh sách nhân viên (MANV, HOTEN) nhưng đặt lại tên hai cột trong kết quả là “Ma so nhan vien” và “Ho ten nhan vien”.
+SELECT  MANV AS'Ma so nhan vien' , HOTEN AS  'Ho ten nhan vien'  FROM NHANVIEN 
+
+--d9. In ra danh sách các khách hàng (MAKH, HOTEN) đã mua hàng trong ngày 01/01/2007 (NGHD).
 SELECT KHACHHANG.MAKH, HOTEN FROM KHACHHANG
 INNER JOIN HOADON
 ON HOADON.MAKH = KHACHHANG.MAKH
-WHERE HOADON.NGHD = 1/1/2007
+WHERE HOADON.NGHD = '1/1/2007'
+
+--d10. In ra số hóa đơn (SOHD), trị giá (TRIGIA) các hóa đơn do nhân viên có tên “Nguyen Van B” (HOTEN) lập trong ngày 28/10/2006 (NGHD).
+ SELECT SOHD,TRIGIA
+FROM  HOADON A, NHANVIEN B
+WHERE A.MANV=B.MANV AND NGHD='28/10/2006' AND HOTEN='NGUYEN VAN B' 
+--d11. In ra danh sách nhân viên (MANV, HOTEN) của cửa hàng và số hóa đơn (SOHD) mà nhân viên đó thanh toán (nếu có).
+SELECT NHANVIEN.MANV, COUNT(HOADON.SOHD) as 'SHD' FROM NHANVIEN 
+JOIN HOADON ON HOADON.MANV = NHANVIEN.MANV
+GROUP BY NHANVIEN.MANV
+--d12. In ra danh sách tất cả các hóa đơn (SOHD) và họ tên (HOTEN) của khách hàng mua hóa đơn đó (nếu có).
+SELECT KHACHHANG.HOTEN ,HOADON.SOHD FROM KHACHHANG 
+JOIN HOADON ON KHACHHANG.MAKH = HOADON.MAKH
+
+--d13. In ra danh sách khách hàng với tất cả các thuộc tính của bảng KHACHHANG.
+SELECT * FROM KHACHHANG
+--d14. In ra danh sách các nước (NUOCSX) cung cấp sản phẩm cho cửa hàng (Lưu ý: Không được trùng nhau).
+ SELECT   DIStinct(NUOCSX) FROM SANPHAM 
+
+--d15. Cho biết số lượng sản phẩm khác nhau được bán ra trong năm 2006.
+SELECT COUNT(DISTINCT MASP)
+FROM CTHD C INNER JOIN HOADON H
+ON C.SOHD = H.SOHD
+WHERE YEAR(NGHD) = 1900
+
+--d16. In ra danh sách khách hàng (MAKH, HOTEN, NGSINH) đã được sắp xếp theo thứ tự ngày sinh (NGSINH) tăng dần.
+       SELECT MAKH, HOTEN,  NGSINH FROM KHACHHANG 
+	   ORDER BY NGSINH 
+
+--d17. In ra danh sách 3 khách hàng đầu tiên (MAKH, HOTEN) sắp xếp theo doanh số (DOANHSO) giảm dần.
+   SELECT TOP 3 MAKH, HOTEN
+FROM KHACHHANG
+ORDER BY DOANHSO DESC
+--d18. In ra các số hóa đơn (SOHD), trị giá hóa đơn (TRIGIA) trong tháng 01/2007 (NGHD), sắp xếp theo trị giá của hóa đơn (TRIGIA) giảm dần.
+SELECT * FROM HOADON WHERE MONTH(NGHD)  = 1 AND YEAR (NGHD) = 1900
+ORDER BY TRIGIA DESC
+--d19. In ra danh sách hóa đơn (SOHD) không có thông tin về khách hàng (MAKH).
+  SELECT * FROM HOADON 
+
+--d20. In ra danh sách hóa đơn (SOHD) có thông tin về nhân viên bán hàng (MANV).
+--d21. In ra danh sách các sản phẩm (MASP, TENSP) đã được bán ra.
+--d22. In ra danh sách các sản phẩm (MASP, TENSP) không bán được.
+--d23. In ra danh sách tên các sản phẩm (TENSP) có mã sản phẩm (MASP) có dạng “TV_ _” (Hai ký tự đầu là “T” và “V”, hai ký tự sau bất kỳ).
+--d24. In ra danh sách các khách hàng (MAKH, HOTEN) có họ là “Tran”.
+--d25. In ra danh sách các sản phẩm (MASP, TENSP) có mã sản phẩm (MASP) bắt đầu là “B” và kết thúc là “01”.
+--d26. Cho biết trị giá hóa đơn (TRIGIA) cao nhất, thấp nhất.
+--d27. Cho biết trị giá trung bình của tất cả các hóa đơn được cửa hàng bán ra.
+--d28. Tính tổng doanh thu bán hàng trong năm 2006.
+--d29. Tính tổng số lượng sản phẩm do “Trung Quoc” sản xuất (NUOCSX).
+--d30. Cho biết danh sách khách hàng (MAKH, HOTEN) của khách hàng có doanh số (DOANHSO) cao nhất, thấp nhất.
+--d31. Cho biết danh sách khách hàng (MAKH, HOTEN) của khách hàng có năm sinh lớn nhất, nhỏ nhất.
+--d32. Với từng nước sản xuất (NUOCSX), tìm giá bán (GIA) cao nhất, thấp nhất, trung bình của các sản phẩm.
+--d33. Tìm số hóa đơn (SOHD) có trị giá (TRIGIA) cao nhất trong năm 2006.
+--d34. Tính tổng số lượng sản phẩm do từng nước sản xuất (NUOCSX).
+SELECT NUOCSX,MIN(GIA) [GIA THAP NHAT], AVG(GIA) [GIA TB], MAX(GIA) [GIA CAO NHAT]
+FROM  SANPHAM
+GROUP BY  NUOCSX
+--d35. Tính doanh thu bán hàng của từng tháng trong năm 2006
+
 
