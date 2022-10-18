@@ -435,15 +435,26 @@ WHERE YEAR(NGHD) = 1900
 FROM KHACHHANG
 ORDER BY DOANHSO DESC
 --d18. In ra các số hóa đơn (SOHD), trị giá hóa đơn (TRIGIA) trong tháng 01/2007 (NGHD), sắp xếp theo trị giá của hóa đơn (TRIGIA) giảm dần.
-SELECT * FROM HOADON WHERE MONTH(NGHD)  = 1 AND YEAR (NGHD) = 1900
+SELECT * FROM HOADON WHERE MONTH(NGHD)  = 1 AND YEAR (NGHD) = 01/2007
 ORDER BY TRIGIA DESC
 --d19. In ra danh sách hóa đơn (SOHD) không có thông tin về khách hàng (MAKH).
-  SELECT * FROM HOADON 
 
+  SELECT SOHD FROM HOADON WHERE MAKH IS NULL	
 --d20. In ra danh sách hóa đơn (SOHD) có thông tin về nhân viên bán hàng (MANV).
+SELECT * FROM HOADON
+JOIN NHANVIEN ON NHANVIEN.MANV = HOADON.MANV
 --d21. In ra danh sách các sản phẩm (MASP, TENSP) đã được bán ra.
+
+SELECT CTHD.MASP, TENSP FROM SANPHAM 
+JOIN CTHD  ON CTHD.MASP = SANPHAM.MASP
+
 --d22. In ra danh sách các sản phẩm (MASP, TENSP) không bán được.
+SELECT MASP, TENSP
+FROM  SANPHAM
+WHERE MASP NOT IN ( SELECT MASP
+     FROM  CTHD)
 --d23. In ra danh sách tên các sản phẩm (TENSP) có mã sản phẩm (MASP) có dạng “TV_ _” (Hai ký tự đầu là “T” và “V”, hai ký tự sau bất kỳ).
+
 --d24. In ra danh sách các khách hàng (MAKH, HOTEN) có họ là “Tran”.
 --d25. In ra danh sách các sản phẩm (MASP, TENSP) có mã sản phẩm (MASP) bắt đầu là “B” và kết thúc là “01”.
 --d26. Cho biết trị giá hóa đơn (TRIGIA) cao nhất, thấp nhất.
@@ -459,5 +470,3 @@ SELECT NUOCSX,MIN(GIA) [GIA THAP NHAT], AVG(GIA) [GIA TB], MAX(GIA) [GIA CAO NHA
 FROM  SANPHAM
 GROUP BY  NUOCSX
 --d35. Tính doanh thu bán hàng của từng tháng trong năm 2006
-
-
