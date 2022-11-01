@@ -97,10 +97,10 @@ insert into SANPHAM (MASP, TENSP, DVT, NUOCSX, GIA) values
 insert into SANPHAM (MASP, TENSP, DVT, NUOCSX, GIA) values
 ('ST09', 'But long', 'cay', 'Viet Nam', 5000)
 
-dELETE FROM HOADON
+select * from HOADON
 -- HOA DON
 	insert into HOADON (SOHD,NGHD,MAKH,MANV,TRIGIA) values
-	('1001', '2006-23-7', 'KH01', 'NV01', 320000),
+	('1001', '2006-7-23', 'KH01', 'NV01', 320000),
 	('1002', '2006-08-12', 'KH01', 'NV02', 840000),
 	('1003', '2006-8-23', 'KH02', 'NV01', 100000),
 	('1004', '2006-09-01', 'KH02', 'NV01', 180000),
@@ -120,7 +120,6 @@ dELETE FROM HOADON
 	('1018', '2007-1-13', 'KH08', 'NV03', 330000),
 	('1019', '2007-1-13', 'KH01', 'NV03', 30000)
 
-	DELETE from CTHD
 insert into CTHD (SOHD,MASP,SL) values
 ('1001', 'TV02', 10),
 ('1001', 'ST01', 5),
