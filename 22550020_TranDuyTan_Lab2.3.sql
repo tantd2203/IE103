@@ -13,9 +13,9 @@ WHERE A.MANV=B.MANV AND NGHD='28/10/2006' AND HOTEN='NGUYEN VAN B'
 
 --d11. In ra danh sách nhân viên (MANV, HOTEN) của cửa hàng và số hóa đơn (SOHD) mà nhân viên đó thanh toán (nếu có)
 
-SELECT NV.MANV,HOTEN ,SOHD 
-FROM NHANVIEN NV LEFT JOIN HOADON HD
-ON NV.MANV =HD.MANV
+	SELECT NV.MANV,HOTEN ,SOHD 
+	FROM NHANVIEN NV LEFT JOIN HOADON HD
+	ON NV.MANV =HD.MANV
 
 --d12. In ra danh sách tất cả các hóa đơn (SOHD) và họ tên (HOTEN) của khách hàng mua hóa đơn đó (nếu có).
 SELECT SOHD ,HOTEN  FROM HOADON HD 
@@ -30,7 +30,8 @@ WHERE YEAR(NGHD) = 2006
 --d16. In ra danh sách khách hàng (MAKH, HOTEN, NGSINH) đã được sắp xếp theo thứ tự ngày sinh (NGSINH) tăng dần.
        SELECT MAKH, HOTEN,  NGSINH 
 	   FROM KHACHHANG 
-	   ORDER BY NGSINH  DESC
+	   ORDER BY NGSINH   ASC
+
 --d17. In ra danh sách 3 khách hàng đầu tiên (MAKH, HOTEN) sắp xếp theo doanh số (DOANHSO) giảm dần.
    SELECT TOP 3 MAKH, HOTEN
 FROM KHACHHANG
